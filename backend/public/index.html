@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>错题本系统</title>
+    <!-- 引入Element Plus样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus@2.3.12/dist/index.css" />
+  </head>
+  <body>
+    <div id="app">
+      <h1>错题本系统</h1>
+      <p>测试页面 - 后端服务正常运行</p>
+      <button onclick="testLogin()">测试登录接口</button>
+      <button onclick="testRegister()">测试注册接口</button>
+      <div id="result"></div>
+    </div>
+    <script>
+      async function testLogin() {
+        const result = document.getElementById('result');
+        result.innerHTML = '测试登录接口...';
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              email: 'test@example.com',
+              password: 'password123'
+            })
+          });
+          const data = await response.json();
+          result.innerHTML = '登录接口测试结果: ' + JSON.stringify(data, null, 2);
+        } catch (error) {
+          result.innerHTML = '登录接口测试失败: ' + error.message;
+        }
+      }
+      
+      async function testRegister() {
+        const result = document.getElementById('result');
+        result.innerHTML = '测试注册接口...';
+        try {
+          const response = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: 'testuser',
+              email: 'test@example.com',
+              password: 'password123'
+            })
+          });
+          const data = await response.json();
+          result.innerHTML = '注册接口测试结果: ' + JSON.stringify(data, null, 2);
+        } catch (error) {
+          result.innerHTML = '注册接口测试失败: ' + error.message;
+        }
+      }
+    </script>
+  </body>
+</html>
