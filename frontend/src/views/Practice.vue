@@ -8,7 +8,7 @@
           </el-button>
           <h2>练习中心</h2>
           <el-button type="primary" @click="historyVisible = true">
-            <el-icon><Time /></el-icon> 练习历史
+            <el-icon><Clock /></el-icon> 练习历史
           </el-button>
         </div>
       </template>
@@ -244,7 +244,7 @@
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Document, Grid, Refresh, Timer, Time } from '@element-plus/icons-vue'
+import { Document, Grid, Refresh, Timer, Clock } from '@element-plus/icons-vue'
 
 export default {
   name: 'Practice',
@@ -253,7 +253,7 @@ export default {
     Grid,
     Refresh,
     Timer,
-    Time
+    Clock
   },
   setup() {
     const router = useRouter()
