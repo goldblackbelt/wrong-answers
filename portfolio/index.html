@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI编程课程毕业名片</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                        accent: '#8b5cf6',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .hover-scale {
+                @apply transition-all duration-300 hover:scale-105;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light text-dark">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md fixed w-full z-10">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="text-2xl font-bold text-primary">
+                <span class="fa fa-graduation-cap mr-2"></span>
+                课程毕业名片
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#home" class="hover:text-primary transition-all-300">首页</a>
+                <a href="#project" class="hover:text-primary transition-all-300">项目路演</a>
+                <a href="#reflection" class="hover:text-primary transition-all-300">学习复盘</a>
+                <a href="#contact" class="hover:text-primary transition-all-300">联系方式</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-toggle" class="text-dark focus:outline-none">
+                    <span class="fa fa-bars text-xl"></span>
+                </button>
+            </div>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="#home" class="py-2 hover:text-primary transition-all-300">首页</a>
+                <a href="#project" class="py-2 hover:text-primary transition-all-300">项目路演</a>
+                <a href="#reflection" class="py-2 hover:text-primary transition-all-300">学习复盘</a>
+                <a href="#contact" class="py-2 hover:text-primary transition-all-300">联系方式</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 首页/英雄区 -->
+    <section id="home" class="pt-24 pb-16 md:pt-32 md:pb-24 bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6 text-shadow">
+                        AI编程课程<br>
+                        <span class="text-primary">毕业名片</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-600 mb-8">
+                        将课程学习内容融会贯通，展示从痛点发现到产品实现的完整过程
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#project" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-all-300 shadow-md hover-scale">
+                            <span class="fa fa-rocket mr-2"></span>查看项目
+                        </a>
+                        <a href="#reflection" class="bg-white text-primary border border-primary px-6 py-3 rounded-lg hover:bg-blue-50 transition-all-300 shadow-md hover-scale">
+                            <span class="fa fa-book mr-2"></span>学习复盘
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-5/12">
+                    <div class="bg-white p-6 rounded-xl shadow-lg hover-scale">
+                        <div class="text-center">
+                            <div class="w-32 h-32 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-6">
+                                <span class="fa fa-code text-5xl text-white"></span>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-2">AI编程学员</h2>
+                            <p class="text-gray-600">通过AI辅助开发，实现从0到1的产品构建</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 项目路演 -->
+    <section id="project" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">
+                    <span class="fa fa-lightbulb-o text-yellow-500 mr-2"></span>
+                    项目路演
+                </h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">展示我发现的痛点场景、MVP产品，分享从点子到产品的挖掘思路</p>
+            </div>
+
+            <!-- 痛点场景 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-6 text-center">痛点场景</h3>
+                <div class="bg-gray-50 p-8 rounded-xl shadow-md">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-semibold mb-4 text-primary">问题背景</h4>
+                            <p class="text-gray-700 mb-4">
+                                在学生的日常学习和考试中，会遇到大量的错题。这些错题反映了学生的知识薄弱点，但传统的错题管理方式存在诸多问题。
+                            </p>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <span class="fa fa-times-circle text-red-500 mt-1 mr-3"></span>
+                                    <span><strong>手动整理繁琐：</strong>学生需要手动抄写错题，耗时耗力</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="fa fa-times-circle text-red-500 mt-1 mr-3"></span>
+                                    <span><strong>分类困难：</strong>错题难以按照知识点、难度等维度有效分类</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="fa fa-times-circle text-red-500 mt-1 mr-3"></span>
+                                    <span><strong>复习无计划：</strong>缺乏科学的复习计划，导致错题重复犯错</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="fa fa-times-circle text-red-500 mt-1 mr-3"></span>
+                                    <span><strong>数据分析缺失：</strong>无法直观了解自己的知识掌握情况</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="fa fa-times-circle text-red-500 mt-1 mr-3"></span>
+                                    <span><strong>多设备同步问题：</strong>在不同设备间切换时，错题数据无法同步</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold mb-4 text-secondary">市场机会</h4>
+                            <p class="text-gray-700 mb-4">
+                                这是一个广泛存在的痛点，几乎所有学生都需要面对错题管理的问题。通过数字化、智能化的解决方案，可以大幅提升学习效率。
+                            </p>
+                            <div class="bg-white p-6 rounded-lg shadow-sm">
+                                <h5 class="font-semibold mb-3">目标用户</h5>
+                                <ul class="space-y-2">
+                                    <li class="flex items-center">
+                                        <span class="fa fa-user text-primary mr-2"></span>
+                                        中小学生
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-user text-primary mr-2"></span>
+                                        高中生
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-user text-primary mr-2"></span>
+                                        大学生
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-user text-primary mr-2"></span>
+                                        备考人员
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MVP产品 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-6 text-center">MVP产品</h3>
+                <div class="bg-gray-50 p-8 rounded-xl shadow-md">
+                    <h4 class="text-xl font-semibold mb-4 text-primary">错题本系统</h4>
+                    <p class="text-gray-700 mb-6">
+                        一个数字化的错题管理系统，帮助学生高效管理错题，提升学习效果。
+                    </p>
+
+                    <!-- 核心功能 -->
+                    <div class="mb-8">
+                        <h5 class="font-semibold mb-4">核心功能</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-white p-6 rounded-lg shadow-sm hover-scale">
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                    <span class="fa fa-upload text-primary text-xl"></span>
+                                </div>
+                                <h6 class="font-semibold mb-2">错题收集</h6>
+                                <p class="text-gray-600 text-sm">支持手动录入和拍照上传错题，快速收集错题</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-sm hover-scale">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                                    <span class="fa fa-tags text-secondary text-xl"></span>
+                                </div>
+                                <h6 class="font-semibold mb-2">智能分类</h6>
+                                <p class="text-gray-600 text-sm">自动按照学科、知识点、难度等维度分类错题</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-sm hover-scale">
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                                    <span class="fa fa-calendar text-accent text-xl"></span>
+                                </div>
+                                <h6 class="font-semibold mb-2">复习计划</h6>
+                                <p class="text-gray-600 text-sm">基于艾宾浩斯遗忘曲线生成个性化复习计划</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-sm hover-scale">
+                                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
+                                    <span class="fa fa-bar-chart text-yellow-500 text-xl"></span>
+                                </div>
+                                <h6 class="font-semibold mb-2">数据分析</h6>
+                                <p class="text-gray-600 text-sm">提供详细的学习数据统计和可视化分析</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-sm hover-scale">
+                                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                                    <span class="fa fa-cloud text-red-500 text-xl"></span>
+                                </div>
+                                <h6 class="font-semibold mb-2">多设备同步</h6>
+                                <p class="text-gray-600 text-sm">云端存储，支持多设备访问和数据同步</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-sm hover-scale">
+                                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                                    <span class="fa fa-pencil text-indigo-500 text-xl"></span>
+                                </div>
+                                <h6 class="font-semibold mb-2">练习模式</h6>
+                                <p class="text-gray-600 text-sm">提供模拟考试、专项练习、随机练习等多种模式</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 技术实现 -->
+                    <div>
+                        <h5 class="font-semibold mb-4">技术实现</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white p-6 rounded-lg shadow-sm">
+                                <h6 class="font-semibold mb-3 text-primary">前端技术</h6>
+                                <ul class="space-y-2">
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check-circle text-green-500 mr-2"></span>
+                                        Vue 3 + Composition API
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check-circle text-green-500 mr-2"></span>
+                                        Element Plus UI 库
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check-circle text-green-500 mr-2"></span>
+                                        ECharts 数据可视化
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check-circle text-green-500 mr-2"></span>
+                                        Vite 构建工具
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-sm">
+                                <h6 class="font-semibold mb-3 text-secondary">后端技术</h6>
+                                <ul class="space-y-2">
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check-circle text-green-500 mr-2"></span>
+                                        Express.js 框架
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check-circle text-green-500 mr-2"></span>
+                                        JWT 身份认证
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check-circle text-green-500 mr-2"></span>
+                                        模拟数据存储
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check-circle text-green-500 mr-2"></span>
+                                        RESTful API 设计
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 产品生长路径 -->
+            <div>
+                <h3 class="text-2xl font-bold mb-6 text-center">产品生长路径</h3>
+                <div class="relative">
+                    <!-- 时间线 -->
+                    <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gray-200"></div>
+
+                    <!-- 时间线项目 -->
+                    <div class="space-y-12">
+                        <!-- 阶段 1 -->
+                        <div class="flex flex-col md:flex-row items-center">
+                            <div class="md:w-1/2 md:pr-12 md:text-right mb-6 md:mb-0">
+                                <h4 class="text-xl font-semibold mb-2 text-primary">MVP阶段</h4>
+                                <p class="text-gray-700">实现核心错题管理功能，验证产品可行性</p>
+                                <ul class="mt-3 space-y-2 md:text-right">
+                                    <li class="flex md:justify-end items-center md:items-start">
+                                        <span class="md:order-2 mr-0 md:ml-3">基础错题收集和管理</span>
+                                        <span class="fa fa-check text-green-500 md:order-1"></span>
+                                    </li>
+                                    <li class="flex md:justify-end items-center md:items-start">
+                                        <span class="md:order-2 mr-0 md:ml-3">简单的分类和搜索</span>
+                                        <span class="fa fa-check text-green-500 md:order-1"></span>
+                                    </li>
+                                    <li class="flex md:justify-end items-center md:items-start">
+                                        <span class="md:order-2 mr-0 md:ml-3">本地数据存储</span>
+                                        <span class="fa fa-check text-green-500 md:order-1"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="z-10 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-white">
+                                <span class="font-bold">1</span>
+                            </div>
+                            <div class="md:w-1/2 md:pl-12"></div>
+                        </div>
+
+                        <!-- 阶段 2 -->
+                        <div class="flex flex-col md:flex-row items-center">
+                            <div class="md:w-1/2 md:pr-12"></div>
+                            <div class="z-10 flex items-center justify-center w-12 h-12 rounded-full bg-secondary text-white">
+                                <span class="font-bold">2</span>
+                            </div>
+                            <div class="md:w-1/2 md:pl-12 mb-6 md:mb-0">
+                                <h4 class="text-xl font-semibold mb-2 text-secondary">增长阶段</h4>
+                                <p class="text-gray-700">优化用户体验，增加更多学科支持，扩大用户群体</p>
+                                <ul class="mt-3 space-y-2">
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check text-green-500 mr-3"></span>
+                                        <span>AI辅助解题和知识点讲解</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check text-green-500 mr-3"></span>
+                                        <span>多学科支持和题库扩充</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <span class="fa fa-check text-green-500 mr-3"></span>
+                                        <span>社交功能和学习社区</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 阶段 3 -->
+                        <div class="flex flex-col md:flex-row items-center">
+                            <div class="md:w-1/2 md:pr-12 md:text-right mb-6 md:mb-0">
+                                <h4 class="text-xl font-semibold mb-2 text-accent">成熟阶段</h4>
+                                <p class="text-gray-700">引入AI功能，开发教师端，构建完整的学习生态系统</p>
+                                <ul class="mt-3 space-y-2 md:text-right">
+                                    <li class="flex md:justify-end items-center md:items-start">
+                                        <span class="md:order-2 mr-0 md:ml-3">教师端和班级管理</span>
+                                        <span class="fa fa-check text-green-500 md:order-1"></span>
+                                    </li>
+                                    <li class="flex md:justify-end items-center md:items-start">
+                                        <span class="md:order-2 mr-0 md:ml-3">个性化学习路径推荐</span>
+                                        <span class="fa fa-check text-green-500 md:order-1"></span>
+                                    </li>
+                                    <li class="flex md:justify-end items-center md:items-start">
+                                        <span class="md:order-2 mr-0 md:ml-3">学习数据深度分析</span>
+                                        <span class="fa fa-check text-green-500 md:order-1"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="z-10 flex items-center justify-center w-12 h-12 rounded-full bg-accent text-white">
+                                <span class="font-bold">3</span>
+                            </div>
+                            <div class="md:w-1/2 md:pl-12"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 学习复盘 -->
+    <section id="reflection" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">
+                    <span class="fa fa-book text-primary mr-2"></span>
+                    学习复盘
+                </h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">写下这几天的AI编程心得与收获，给其它伙伴可以参考的AI学习路径</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-md">
+                <!-- 学习心得 -->
+                <div class="mb-12">
+                    <h3 class="text-2xl font-bold mb-6">AI编程心得与收获</h3>
+                    <div class="space-y-6">
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="fa fa-lightbulb-o text-primary text-xl"></span>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">AI辅助开发的效率提升</h4>
+                                <p class="text-gray-700">
+                                    通过AI工具的辅助，我能够快速生成代码骨架、解决语法问题、优化代码结构，大幅提升了开发效率。特别是在处理重复性任务和查找API文档时，AI的帮助尤为明显。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="fa fa-code text-secondary text-xl"></span>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">全栈开发能力的培养</h4>
+                                <p class="text-gray-700">
+                                    在这次项目中，我不仅学习了前端技术（Vue 3、Element Plus），还接触了后端开发（Express.js、JWT），实现了从前端到后端的完整开发流程，培养了全栈开发的思维方式。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="fa fa-cogs text-accent text-xl"></span>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">问题解决能力的提升</h4>
+                                <p class="text-gray-700">
+                                    在开发过程中，我遇到了各种问题，如构建错误、部署失败等。通过AI的指导和自己的探索，我学会了如何分析问题、查找原因并解决问题，这是编程中非常重要的能力。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="fa fa-rocket text-yellow-500 text-xl"></span>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">产品思维的建立</h4>
+                                <p class="text-gray-700">
+                                    从痛点分析到产品设计，再到功能实现，我学会了如何以用户为中心思考问题，如何将一个想法转化为实际可用的产品，建立了初步的产品思维。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 学习路径 -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">AI学习路径推荐</h3>
+                    <div class="relative">
+                        <!-- 路径线 -->
+                        <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gray-200"></div>
+
+                        <!-- 路径步骤 -->
+                        <div class="space-y-12">
+                            <!-- 步骤 1 -->
+                            <div class="flex flex-col md:flex-row items-center">
+                                <div class="md:w-1/2 md:pr-12 md:text-right mb-6 md:mb-0">
+                                    <h4 class="text-xl font-semibold mb-2 text-primary">基础准备</h4>
+                                    <p class="text-gray-700">掌握基本的编程概念和HTML/CSS/JavaScript基础</p>
+                                    <ul class="mt-3 space-y-2 md:text-right">
+                                        <li class="flex md:justify-end items-center md:items-start">
+                                            <span class="md:order-2 mr-0 md:ml-3">学习HTML/CSS/JavaScript基础</span>
+                                            <span class="fa fa-check-circle text-green-500 md:order-1"></span>
+                                        </li>
+                                        <li class="flex md:justify-end items-center md:items-start">
+                                            <span class="md:order-2 mr-0 md:ml-3">了解Git版本控制</span>
+                                            <span class="fa fa-check-circle text-green-500 md:order-1"></span>
+                                        </li>
+                                        <li class="flex md:justify-end items-center md:items-start">
+                                            <span class="md:order-2 mr-0 md:ml-3">熟悉命令行操作</span>
+                                            <span class="fa fa-check-circle text-green-500 md:order-1"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="z-10 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-white">
+                                    <span class="font-bold">1</span>
+                                </div>
+                                <div class="md:w-1/2 md:pl-12"></div>
+                            </div>
+
+                            <!-- 步骤 2 -->
+                            <div class="flex flex-col md:flex-row items-center">
+                                <div class="md:w-1/2 md:pr-12"></div>
+                                <div class="z-10 flex items-center justify-center w-12 h-12 rounded-full bg-secondary text-white">
+                                    <span class="font-bold">2</span>
+                                </div>
+                                <div class="md:w-1/2 md:pl-12 mb-6 md:mb-0">
+                                    <h4 class="text-xl font-semibold mb-2 text-secondary">前端框架学习</h4>
+                                    <p class="text-gray-700">学习现代前端框架，如Vue 3或React</p>
+                                    <ul class="mt-3 space-y-2">
+                                        <li class="flex items-center">
+                                            <span class="fa fa-check-circle text-green-500 mr-3"></span>
+                                            <span>学习Vue 3或React基础</span>
+                                        </li>
+                                        <li class="flex items-center">
+                                            <span class="fa fa-check-circle text-green-500 mr-3"></span>
+                                            <span>掌握组件化开发思想</span>
+                                        </li>
+                                        <li class="flex items-center">
+                                            <span class="fa fa-check-circle text-green-500 mr-3"></span>
+                                            <span>学习状态管理和路由</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- 步骤 3 -->
+                            <div class="flex flex-col md:flex-row items-center">
+                                <div class="md:w-1/2 md:pr-12 md:text-right mb-6 md:mb-0">
+                                    <h4 class="text-xl font-semibold mb-2 text-accent">后端开发入门</h4>
+                                    <p class="text-gray-700">学习后端开发基础，如Express.js或Node.js</p>
+                                    <ul class="mt-3 space-y-2 md:text-right">
+                                        <li class="flex md:justify-end items-center md:items-start">
+                                            <span class="md:order-2 mr-0 md:ml-3">学习Express.js或类似框架</span>
+                                            <span class="fa fa-check-circle text-green-500 md:order-1"></span>
+                                        </li>
+                                        <li class="flex md:justify-end items-center md:items-start">
+                                            <span class="md:order-2 mr-0 md:ml-3">了解RESTful API设计</span>
+                                            <span class="fa fa-check-circle text-green-500 md:order-1"></span>
+                                        </li>
+                                        <li class="flex md:justify-end items-center md:items-start">
+                                            <span class="md:order-2 mr-0 md:ml-3">学习数据库基础</span>
+                                            <span class="fa fa-check-circle text-green-500 md:order-1"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="z-10 flex items-center justify-center w-12 h-12 rounded-full bg-accent text-white">
+                                    <span class="font-bold">3</span>
+                                </div>
+                                <div class="md:w-1/2 md:pl-12"></div>
+                            </div>
+
+                            <!-- 步骤 4 -->
+                            <div class="flex flex-col md:flex-row items-center">
+                                <div class="md:w-1/2 md:pr-12"></div>
+                                <div class="z-10 flex items-center justify-center w-12 h-12 rounded-full bg-yellow-500 text-white">
+                                    <span class="font-bold">4</span>
+                                </div>
+                                <div class="md:w-1/2 md:pl-12 mb-6 md:mb-0">
+                                    <h4 class="text-xl font-semibold mb-2 text-yellow-500">AI工具使用</h4>
+                                    <p class="text-gray-700">学习如何有效使用AI工具辅助编程</p>
+                                    <ul class="mt-3 space-y-2">
+                                        <li class="flex items-center">
+                                            <span class="fa fa-check-circle text-green-500 mr-3"></span>
+                                            <span>掌握AI代码生成提示词技巧</span>
+                                        </li>
+                                        <li class="flex items-center">
+                                            <span class="fa fa-check-circle text-green-500 mr-3"></span>
+                                            <span>学习使用AI调试和优化代码</span>
+                                        </li>
+                                        <li class="flex items-center">
+                                            <span class="fa fa-check-circle text-green-500 mr-3"></span>
+                                            <span>了解AI在架构设计中的应用</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- 步骤 5 -->
+                            <div class="flex flex-col md:flex-row items-center">
+                                <div class="md:w-1/2 md:pr-12 md:text-right mb-6 md:mb-0">
+                                    <h4 class="text-xl font-semibold mb-2 text-red-500">项目实战</h4>
+                                    <p class="text-gray-700">通过实际项目巩固所学知识</p>
+                                    <ul class="mt-3 space-y-2 md:text-right">
+                                        <li class="flex md:justify-end items-center md:items-start">
+                                            <span class="md:order-2 mr-0 md:ml-3">从0到1构建完整项目</span>
+                                            <span class="fa fa-check-circle text-green-500 md:order-1"></span>
+                                        </li>
+                                        <li class="flex md:justify-end items-center md:items-start">
+                                            <span class="md:order-2 mr-0 md:ml-3">学习部署和上线流程</span>
+                                            <span class="fa fa-check-circle text-green-500 md:order-1"></span>
+                                        </li>
+                                        <li class="flex md:justify-end items-center md:items-start">
+                                            <span class="md:order-2 mr-0 md:ml-3">持续迭代和优化产品</span>
+                                            <span class="fa fa-check-circle text-green-500 md:order-1"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="z-10 flex items-center justify-center w-12 h-12 rounded-full bg-red-500 text-white">
+                                    <span class="font-bold">5</span>
+                                </div>
+                                <div class="md:w-1/2 md:pl-12"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 上线部署 -->
+    <section id="deployment" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">
+                    <span class="fa fa-cloud-upload text-primary mr-2"></span>
+                    上线部署
+                </h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">代码上传GitHub，通过Vercel生成公网链接</p>
+            </div>
+
+            <div class="bg-gray-50 p-8 rounded-xl shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- GitHub -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm hover-scale">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <span class="fa fa-github text-3xl text-gray-800"></span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-center">GitHub</h3>
+                        <p class="text-gray-600 text-center mb-6">代码托管平台，用于版本控制和协作开发</p>
+                        <div class="text-center">
+                            <a href="#" class="text-primary hover:underline">
+                                <span class="fa fa-external-link mr-2"></span>访问仓库
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Vercel -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm hover-scale">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <span class="fa fa-globe text-3xl text-gray-800"></span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-center">Vercel</h3>
+                        <p class="text-gray-600 text-center mb-6">部署平台，用于生成公网可访问的链接</p>
+                        <div class="text-center">
+                            <a href="#" class="text-primary hover:underline">
+                                <span class="fa fa-external-link mr-2"></span>访问网站
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 技术栈 -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm hover-scale">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <span class="fa fa-cubes text-3xl text-gray-800"></span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-center">技术栈</h3>
+                        <p class="text-gray-600 text-center mb-6">项目使用的主要技术和工具</p>
+                        <ul class="space-y-2 text-center">
+                            <li>HTML5 / CSS3 / JavaScript</li>
+                            <li>Tailwind CSS</li>
+                            <li>Font Awesome</li>
+                            <li>GitHub + Vercel</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系方式 -->
+    <section id="contact" class="py-16 bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">
+                    <span class="fa fa-envelope text-primary mr-2"></span>
+                    联系方式
+                </h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">如果您对项目有任何问题或建议，欢迎与我联系</p>
+            </div>
+
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">联系信息</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-center">
+                                <span class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                    <span class="fa fa-envelope text-primary"></span>
+                                </span>
+                                <span>example@email.com</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                    <span class="fa fa-github text-primary"></span>
+                                </span>
+                                <span>github.com/username</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                    <span class="fa fa-linkedin text-primary"></span>
+                                </span>
+                                <span>linkedin.com/in/username</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">留言</h3>
+                        <form>
+                            <div class="mb-4">
+                                <input type="text" placeholder="您的姓名" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            <div class="mb-4">
+                                <input type="email" placeholder="您的邮箱" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            <div class="mb-4">
+                                <textarea placeholder="您的留言" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-blue-600 transition-all-300">
+                                <span class="fa fa-paper-plane mr-2"></span>发送留言
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold mb-4">AI编程课程毕业名片</h3>
+                <p class="text-gray-400 mb-6">将课程学习内容融会贯通，展示从痛点发现到产品实现的完整过程</p>
+                <div class="flex justify-center space-x-6 mb-6">
+                    <a href="#home" class="text-gray-400 hover:text-white transition-all-300">
+                        <span class="fa fa-home text-xl"></span>
+                    </a>
+                    <a href="#project" class="text-gray-400 hover:text-white transition-all-300">
+                        <span class="fa fa-lightbulb-o text-xl"></span>
+                    </a>
+                    <a href="#reflection" class="text-gray-400 hover:text-white transition-all-300">
+                        <span class="fa fa-book text-xl"></span>
+                    </a>
+                    <a href="#contact" class="text-gray-400 hover:text-white transition-all-300">
+                        <span class="fa fa-envelope text-xl"></span>
+                    </a>
+                </div>
+                <p class="text-gray-500">© 2026 AI编程学员. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // 关闭移动端菜单
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+
+        // 滚动动画
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.classList.remove('py-3');
+            } else {
+                nav.classList.add('py-3');
+                nav.classList.remove('py-2');
+            }
+        });
+    </script>
+</body>
+</html>
