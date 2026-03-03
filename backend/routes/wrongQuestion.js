@@ -27,7 +27,9 @@ const upload = multer({ storage: storage });
 // 上传错题
 router.post('/upload', authenticate, upload.single('questionImage'), async (req, res) => {
   try {
-    const { questionContent, standardAnswer, userAnswer, errorReason, category, difficulty } = req.body;
+    const { questionContent, standardAnswer, userAnswer, errorReason, category, difficulty, knowledgePoints } = req.body;
+
+    console.log('上传错题请求:', { questionContent, category, difficulty, knowledgePoints });
 
     // 验证输入
     if (!questionContent || !standardAnswer) {
@@ -40,6 +42,17 @@ router.post('/upload', authenticate, upload.single('questionImage'), async (req,
       questionImage = `/uploads/${req.file.filename}`;
     }
 
+    // 解析知识点
+    let parsedKnowledgePoints = [];
+    if (knowledgePoints) {
+      try {
+        parsedKnowledgePoints = typeof knowledgePoints === 'string' ? JSON.parse(knowledgePoints) : knowledgePoints;
+      } catch (e) {
+        console.warn('解析知识点失败:', e);
+        parsedKnowledgePoints = [];
+      }
+    }
+
     // 创建错题
     const wrongQuestion = await WrongQuestion.create({
       userId: req.user.userId,
@@ -50,8 +63,11 @@ router.post('/upload', authenticate, upload.single('questionImage'), async (req,
       errorReason,
       category,
       difficulty: parseInt(difficulty) || 3,
+      knowledgePoints: parsedKnowledgePoints,
       masteryLevel: 0
     });
+
+    console.log('错题创建成功:', wrongQuestion);
 
     res.status(201).json({
       status: 'success',
@@ -62,7 +78,7 @@ router.post('/upload', authenticate, upload.single('questionImage'), async (req,
     });
   } catch (error) {
     console.error('上传错题错误:', error);
-    res.status(500).json({ status: 'error', message: '服务器内部错误' });
+    res.status(500).json({ status: 'error', message: '服务器内部错误: ' + error.message });
   }
 });
 
