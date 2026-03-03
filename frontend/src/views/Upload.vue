@@ -522,11 +522,13 @@ export default {
 
         const token = localStorage.getItem('token')
         
+        const headers = {}
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`
+        }
+        
         const response = await axios.post('/api/wrong-questions/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': token ? `Bearer ${token}` : ''
-          }
+          headers: headers
         })
 
         if (response.data.status === 'success') {
@@ -540,7 +542,11 @@ export default {
         loading.value = false
         console.error('上传失败:', error)
         if (error.response && error.response.data) {
-          ElMessage.error(error.response.data.message || '上传失败')
+          if (error.response.status === 401) {
+            ElMessage.error('请先登录后再上传错题')
+          } else {
+            ElMessage.error(error.response.data.message || '上传失败')
+          }
         } else {
           ElMessage.error('上传失败，请重试')
         }
