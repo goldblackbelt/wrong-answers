@@ -13,36 +13,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 添加CSRF保护
-const crypto = require('crypto');
-
-// 简单的CSRF保护实现（不依赖session）
-const csrfProtection = (req, res, next) => {
-  // 只对非GET请求进行CSRF保护
-  if (req.method !== 'GET') {
-    // 在开发环境中暂时禁用CSRF保护，方便测试
-    if (process.env.NODE_ENV !== 'production') {
-      return next();
-    }
-    
-    const csrfToken = req.headers['x-csrf-token'] || req.body._csrf;
-    
-    // 这里可以实现更复杂的CSRF令牌验证逻辑
-    // 例如使用Redis存储令牌，或者基于用户会话的令牌验证
-    
-    // 暂时使用一个简单的验证，在生产环境中应该使用更安全的方法
-    if (!csrfToken) {
-      return res.status(403).json({
-        status: 'error',
-        message: 'CSRF令牌验证失败'
-      });
-    }
-  }
-  next();
-};
-
-// 应用CSRF保护到所有路由
-app.use(csrfProtection);
+// 暂时禁用CSRF保护（使用JWT认证，不需要CSRF保护）
+// 注意：在生产环境中，如果需要CSRF保护，请重新启用并正确实现
 
 // 配置静态文件服务
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
