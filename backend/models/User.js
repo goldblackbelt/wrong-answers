@@ -20,12 +20,16 @@ class User {
     }
   }
 
-  // 密码验证方法
+  // 密码验证方法 - 支持模拟模式
   static async comparePassword(candidatePassword, hashedPassword) {
     try {
-      return await bcrypt.compare(candidatePassword, hashedPassword);
+      if (!hashedPassword || hashedPassword.startsWith('$2a$') || hashedPassword.startsWith('$2b$')) {
+        return await bcrypt.compare(candidatePassword, hashedPassword);
+      }
+      return candidatePassword === hashedPassword;
     } catch (error) {
-      throw error;
+      console.error('密码比较错误:', error);
+      return false;
     }
   }
 
