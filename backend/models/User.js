@@ -46,9 +46,9 @@ class User {
   // 创建用户
   static async create(data) {
     try {
-      console.log('创建用户:', data.email, '密码:', data.password);
+      console.log('创建用户:', data.email);
       
-      // 模拟模式下直接保存明文密码，方便测试
+      // 不加密密码，在模拟模式下使用明文
       const passwordToSave = data.password;
       
       const { data: user, error } = await global.supabase
