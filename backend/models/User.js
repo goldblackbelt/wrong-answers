@@ -48,15 +48,16 @@ class User {
     try {
       console.log('创建用户:', data.email);
       
-      // 不加密密码，在模拟模式下使用明文
-      const passwordToSave = data.password;
+      // 加密密码
+      const hashedPassword = await this.hashPassword(data.password);
+      console.log('密码已加密');
       
       const { data: user, error } = await global.supabase
         .from('users')
         .insert({
           username: data.username,
           email: data.email,
-          password: passwordToSave,
+          password: hashedPassword,
           created_at: new Date(),
           updated_at: new Date()
         })

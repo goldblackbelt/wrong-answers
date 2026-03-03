@@ -38,11 +38,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// 初始化Supabase客户端 - 使用模拟模式确保系统正常工作
+// 初始化Supabase客户端 - 使用真实的Supabase数据库
 let supabase = null;
 const { url: supabaseUrl, anonKey: supabaseAnonKey, serviceRoleKey: supabaseServiceKey } = supabaseConfig;
 
-console.warn('使用模拟模式运行，确保所有功能正常工作');
+// 尝试使用真实的Supabase数据库
+if (supabaseUrl && supabaseServiceKey) {
+  console.log('连接到Supabase数据库:', supabaseUrl);
+  supabase = createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      persistSession: false
+    }
+  });
+} else {
+  console.warn('Supabase配置不完整，使用模拟模式运行');
 
 // 导入文件系统模块
 const fs = require('fs');
