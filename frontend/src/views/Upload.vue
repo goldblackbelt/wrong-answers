@@ -24,11 +24,11 @@
           <el-form-item label="题目图片">
             <el-upload
               class="upload-demo"
-              :action="'/api/wrong-questions/upload'"
-              :on-success="handleImageUploadSuccess"
-              :on-error="handleImageUploadError"
               :auto-upload="false"
               :show-file-list="false"
+              :on-change="handleFileChange"
+              :limit="1"
+              :accept="image/*"
               ref="imageUpload"
             >
               <template #trigger>
@@ -42,8 +42,8 @@
                 </div>
               </template>
             </el-upload>
-            <div v-if="uploadForm.questionImage" class="image-preview">
-              <img :src="uploadForm.questionImage" alt="题目图片" />
+            <div v-if="previewImage" class="image-preview">
+              <img :src="previewImage" alt="题目图片" />
               <el-button type="danger" size="small" @click="removeImage">
                 删除图片
               </el-button>
@@ -129,6 +129,8 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { Upload } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
 export default {
   name: 'Upload',
@@ -141,6 +143,7 @@ export default {
     const imageUpload = ref(null)
     const loading = ref(false)
     const newKnowledgePoint = ref('')
+    const previewImage = ref('')
 
     const uploadForm = reactive({
       questionContent: '',
@@ -176,19 +179,20 @@ export default {
       uploadForm.knowledgePoints = uploadForm.knowledgePoints.filter(item => item !== tag)
     }
 
-    const handleImageUploadSuccess = (response) => {
-      if (response.status === 'success') {
-        uploadForm.questionImage = response.data.wrongQuestion.questionImage
+    const handleFileChange = (file) => {
+      // 创建预览图片
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        previewImage.value = e.target.result
       }
-    }
-
-    const handleImageUploadError = (error) => {
-      console.error('图片上传失败:', error)
-      ElMessage.error('图片上传失败，请重试')
+      reader.readAsDataURL(file.raw)
     }
 
     const removeImage = () => {
-      uploadForm.questionImage = ''
+      previewImage.value = ''
+      if (imageUpload.value) {
+        imageUpload.value.clearFiles()
+      }
     }
 
     const submitForm = async () => {
@@ -198,15 +202,7 @@ export default {
         await uploadFormRef.value.validate()
         loading.value = true
 
-        // 模拟API调用
-        setTimeout(() => {
-          loading.value = false
-          ElMessage.success('错题上传成功')
-          resetForm()
-        }, 1000)
-
-        // 实际API调用
-        /*
+        // 准备FormData
         const formData = new FormData()
         formData.append('questionContent', uploadForm.questionContent)
         formData.append('standardAnswer', uploadForm.standardAnswer)
@@ -215,22 +211,39 @@ export default {
         formData.append('category', uploadForm.category)
         formData.append('difficulty', uploadForm.difficulty)
         formData.append('knowledgePoints', JSON.stringify(uploadForm.knowledgePoints))
+        
+        // 如果有图片，也添加到FormData
+        if (imageUpload.value && imageUpload.value.uploadFiles.length > 0) {
+          const file = imageUpload.value.uploadFiles[0].raw
+          formData.append('questionImage', file)
+        }
 
+        // 从localStorage获取token
+        const token = localStorage.getItem('token')
+        
         const response = await axios.post('/api/wrong-questions/upload', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
+            'Authorization': token ? `Bearer ${token}` : ''
           }
         })
 
         if (response.data.status === 'success') {
+          loading.value = false
           ElMessage.success('错题上传成功')
           resetForm()
+        } else {
+          loading.value = false
+          ElMessage.error(response.data.message || '上传失败')
         }
-        */
       } catch (error) {
         loading.value = false
         console.error('上传失败:', error)
-        ElMessage.error('上传失败，请重试')
+        if (error.response && error.response.data) {
+          ElMessage.error(error.response.data.message || '上传失败')
+        } else {
+          ElMessage.error('上传失败，请重试')
+        }
       }
     }
 
@@ -251,10 +264,10 @@ export default {
       uploadForm,
       uploadRules,
       newKnowledgePoint,
+      previewImage,
       addKnowledgePoint,
       removeKnowledgePoint,
-      handleImageUploadSuccess,
-      handleImageUploadError,
+      handleFileChange,
       removeImage,
       submitForm,
       resetForm
