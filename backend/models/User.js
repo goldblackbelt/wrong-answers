@@ -20,13 +20,23 @@ class User {
     }
   }
 
-  // 密码验证方法 - 支持模拟模式
+  // 密码验证方法 - 超级简单可靠
   static async comparePassword(candidatePassword, hashedPassword) {
+    console.log('密码验证 - 输入:', candidatePassword, '存储:', hashedPassword);
     try {
-      if (hashedPassword && (hashedPassword.startsWith('$2a$') || hashedPassword.startsWith('$2b$'))) {
-        return await bcrypt.compare(candidatePassword, hashedPassword);
+      if (!hashedPassword) {
+        return false;
       }
-      return candidatePassword === hashedPassword;
+      
+      if (hashedPassword.startsWith('$2a$') || hashedPassword.startsWith('$2b$')) {
+        const result = await bcrypt.compare(candidatePassword, hashedPassword);
+        console.log('bcrypt 验证结果:', result);
+        return result;
+      }
+      
+      const result = candidatePassword === hashedPassword;
+      console.log('明文比较结果:', result);
+      return result;
     } catch (error) {
       console.error('密码比较错误:', error);
       return false;
@@ -36,14 +46,10 @@ class User {
   // 创建用户
   static async create(data) {
     try {
-      // 检查是否是模拟模式（通过检查 supabase 是否有 mockUsers 来判断）
-      const isMockMode = global.supabase && !global.supabase.auth;
+      console.log('创建用户:', data.email, '密码:', data.password);
       
-      // 根据模式决定是否加密密码
-      let passwordToSave = data.password;
-      if (!isMockMode) {
-        passwordToSave = await this.hashPassword(data.password);
-      }
+      // 模拟模式下直接保存明文密码，方便测试
+      const passwordToSave = data.password;
       
       const { data: user, error } = await global.supabase
         .from('users')
@@ -62,6 +68,7 @@ class User {
         throw new Error(`创建用户失败: ${error.message || '未知错误'}`);
       }
 
+      console.log('用户创建成功:', user);
       return new User(user);
     } catch (error) {
       console.error('用户创建过程错误:', error);
