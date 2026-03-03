@@ -126,9 +126,9 @@
                     <div class="section-content">{{ aiSolution.solution }}</div>
                   </div>
                   <el-divider v-if="aiSolution.explanation" />
-                  <div v-if="aiSolution.explanation" class="solution-section">
+                  <div class="solution-section">
                     <div class="section-title">
-                      <el-icon><Lightbulb /></el-icon> 解题说明
+                      <el-icon><Star /></el-icon> 解题说明
                     </div>
                     <div class="section-content">{{ aiSolution.explanation }}</div>
                   </div>
@@ -286,7 +286,7 @@ import {
   Check, 
   CircleCheck,
   Document,
-  Lightbulb,
+  Star,
   Collection
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -303,7 +303,7 @@ export default {
     Check,
     CircleCheck,
     Document,
-    Lightbulb,
+    Star,
     Collection
   },
   setup() {
