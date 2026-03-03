@@ -458,7 +458,7 @@ export default {
       aiSolution.value = null
 
       try {
-        const response = await axios.post('/api/ai/solve', {
+        const response = await axios.post('/ai/solve', {
           questionContent: uploadForm.questionContent,
           category: uploadForm.category,
           difficulty: uploadForm.difficulty
@@ -527,7 +527,7 @@ export default {
           headers['Authorization'] = `Bearer ${token}`
         }
         
-        const response = await axios.post('/api/wrong-questions/upload', formData, {
+        const response = await axios.post('/wrong-questions/upload', formData, {
           headers: headers
         })
 
