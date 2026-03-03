@@ -23,7 +23,7 @@ class User {
   // 密码验证方法 - 支持模拟模式
   static async comparePassword(candidatePassword, hashedPassword) {
     try {
-      if (!hashedPassword || hashedPassword.startsWith('$2a$') || hashedPassword.startsWith('$2b$')) {
+      if (hashedPassword && (hashedPassword.startsWith('$2a$') || hashedPassword.startsWith('$2b$'))) {
         return await bcrypt.compare(candidatePassword, hashedPassword);
       }
       return candidatePassword === hashedPassword;
@@ -36,15 +36,21 @@ class User {
   // 创建用户
   static async create(data) {
     try {
-      // 加密密码
-      const hashedPassword = await this.hashPassword(data.password);
+      // 检查是否是模拟模式（通过检查 supabase 是否有 mockUsers 来判断）
+      const isMockMode = global.supabase && !global.supabase.auth;
+      
+      // 根据模式决定是否加密密码
+      let passwordToSave = data.password;
+      if (!isMockMode) {
+        passwordToSave = await this.hashPassword(data.password);
+      }
       
       const { data: user, error } = await global.supabase
         .from('users')
         .insert({
           username: data.username,
           email: data.email,
-          password: hashedPassword,
+          password: passwordToSave,
           created_at: new Date(),
           updated_at: new Date()
         })
