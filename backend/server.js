@@ -42,16 +42,16 @@ const upload = multer({ storage: storage });
 let supabase = null;
 const { url: supabaseUrl, anonKey: supabaseAnonKey, serviceRoleKey: supabaseServiceKey } = supabaseConfig;
 
-// 强制使用模拟模式，避免Supabase数据库连接问题
-if (false) {
-  console.log('连接到实际的Supabase数据库');
+// 使用真实的Supabase数据库
+if (supabaseUrl && supabaseServiceKey) {
+  console.log('连接到Supabase数据库:', supabaseUrl);
   supabase = createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
       persistSession: false
     }
   });
 } else {
-  console.warn('使用模拟模式运行，确保所有功能正常工作');
+  console.warn('Supabase配置不完整，使用模拟模式运行');
   
   // 导入文件系统模块
   const fs = require('fs');
