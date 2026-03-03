@@ -28,7 +28,7 @@
               :show-file-list="false"
               :on-change="handleFileChange"
               :limit="1"
-              :accept="image/*"
+              accept="image/*"
               ref="imageUpload"
             >
               <template #trigger>
