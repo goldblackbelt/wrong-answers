@@ -11,139 +11,255 @@
       </template>
 
       <div class="upload-content">
-        <el-form :model="uploadForm" :rules="uploadRules" ref="uploadFormRef" label-width="120px" class="upload-form">
-          <el-form-item label="题目内容" prop="questionContent">
-            <el-input
-              v-model="uploadForm.questionContent"
-              type="textarea"
-              :rows="4"
-              placeholder="请输入题目内容"
-            />
-          </el-form-item>
-
-          <el-form-item label="题目图片">
+        <!-- 第一步：上传图片 -->
+        <div class="step-section" v-if="currentStep === 1">
+          <div class="step-title">
+            <el-tag type="primary" size="large">第一步</el-tag>
+            <span>上传错题图片（推荐）</span>
+          </div>
+          
+          <div 
+            class="upload-area"
+            :class="{ 'is-dragover': isDragover }"
+            @dragover.prevent="isDragover = true"
+            @dragleave.prevent="isDragover = false"
+            @drop.prevent="handleDrop"
+          >
             <el-upload
-              class="upload-demo"
+              class="image-uploader"
               :auto-upload="false"
               :show-file-list="false"
               :on-change="handleFileChange"
               :limit="1"
               accept="image/*"
+              drag
               ref="imageUpload"
             >
-              <template #trigger>
-                <el-button type="primary">
-                  <el-icon><Upload /></el-icon> 选择图片
-                </el-button>
-              </template>
-              <template #tip>
-                <div class="el-upload__tip">
-                  支持 JPG、PNG 格式，大小不超过 2MB
+              <div v-if="!previewImage" class="upload-placeholder">
+                <el-icon class="upload-icon"><Picture /></el-icon>
+                <div class="upload-text">
+                  <div class="upload-text-main">点击或拖拽图片到这里</div>
+                  <div class="upload-text-sub">支持 JPG、PNG、GIF 格式，大小不超过 10MB</div>
                 </div>
-              </template>
+              </div>
+              <div v-else class="image-preview-wrapper">
+                <img :src="previewImage" alt="题目图片" />
+                <div class="image-actions">
+                  <el-button type="danger" size="small" @click.stop="removeImage">
+                    <el-icon><Delete /></el-icon> 重新上传
+                  </el-button>
+                </div>
+              </div>
             </el-upload>
-            <div v-if="previewImage" class="image-preview">
-              <img :src="previewImage" alt="题目图片" />
-              <el-button type="danger" size="small" @click="removeImage">
-                删除图片
-              </el-button>
-            </div>
-          </el-form-item>
+          </div>
 
-          <el-form-item label="标准答案" prop="standardAnswer">
-            <el-input
-              v-model="uploadForm.standardAnswer"
-              type="textarea"
-              :rows="3"
-              placeholder="请输入标准答案"
-            />
-          </el-form-item>
-
-          <el-form-item label="我的答案" prop="userAnswer">
-            <el-input
-              v-model="uploadForm.userAnswer"
-              type="textarea"
-              :rows="3"
-              placeholder="请输入您的答案"
-            />
-          </el-form-item>
-
-          <el-form-item label="错误原因" prop="errorReason">
-            <el-input
-              v-model="uploadForm.errorReason"
-              type="textarea"
-              :rows="2"
-              placeholder="请输入错误原因"
-            />
-          </el-form-item>
-
-          <el-form-item label="分类" prop="category">
-            <el-select v-model="uploadForm.category" placeholder="请选择分类">
-              <el-option label="数学" value="math" />
-              <el-option label="语文" value="chinese" />
-              <el-option label="英语" value="english" />
-              <el-option label="物理" value="physics" />
-              <el-option label="化学" value="chemistry" />
-              <el-option label="生物" value="biology" />
-              <el-option label="其他" value="other" />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="难度" prop="difficulty">
-            <el-slider v-model="uploadForm.difficulty" :min="1" :max="5" :marks="{ 1: '简单', 3: '中等', 5: '困难' }" />
-          </el-form-item>
-
-          <el-form-item label="知识点">
-            <el-tag
-              v-for="tag in uploadForm.knowledgePoints"
-              :key="tag"
-              closable
-              @close="removeKnowledgePoint(tag)"
-              class="knowledge-tag"
+          <div class="step-actions">
+            <el-button @click="skipToManual">
+              <el-icon><Edit /></el-icon> 直接填写文字（不使用图片）
+            </el-button>
+            <el-button 
+              type="primary" 
+              size="large" 
+              :disabled="!previewImage"
+              @click="analyzeImage"
+              :loading="analyzing"
             >
-              {{ tag }}
-            </el-tag>
-            <el-input
-              v-model="newKnowledgePoint"
-              placeholder="输入知识点并按Enter添加"
-              @keyup.enter="addKnowledgePoint"
-              class="knowledge-input"
-            />
-          </el-form-item>
+              <el-icon v-if="!analyzing"><MagicStick /></el-icon>
+              {{ analyzing ? '正在智能分析...' : '智能分析并继续' }}
+            </el-button>
+          </div>
+        </div>
 
-          <el-form-item>
-            <el-button type="primary" @click="submitForm" :loading="loading">
-              上传错题
+        <!-- 第二步：填写/编辑信息 -->
+        <div class="step-section" v-if="currentStep === 2">
+          <div class="step-title">
+            <el-tag type="success" size="large">第二步</el-tag>
+            <span>完善错题信息</span>
+          </div>
+
+          <!-- 智能分析结果提示 -->
+          <el-alert
+            v-if="analysisResult"
+            :title="analysisResult.title"
+            :type="analysisResult.type"
+            :description="analysisResult.description"
+            show-icon
+            class="analysis-alert"
+            :closable="false"
+          />
+
+          <el-form :model="uploadForm" :rules="uploadRules" ref="uploadFormRef" label-width="100px" class="upload-form">
+            <!-- 图片预览 -->
+            <el-form-item label="题目图片" v-if="previewImage">
+              <div class="form-image-preview">
+                <img :src="previewImage" alt="题目图片" />
+              </div>
+            </el-form-item>
+
+            <el-form-item label="题目内容" prop="questionContent">
+              <el-input
+                v-model="uploadForm.questionContent"
+                type="textarea"
+                :rows="4"
+                placeholder="请输入题目内容"
+              />
+            </el-form-item>
+
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="分类" prop="category">
+                  <el-select v-model="uploadForm.category" placeholder="请选择分类" style="width: 100%">
+                    <el-option label="数学" value="math" />
+                    <el-option label="语文" value="chinese" />
+                    <el-option label="英语" value="english" />
+                    <el-option label="物理" value="physics" />
+                    <el-option label="化学" value="chemistry" />
+                    <el-option label="生物" value="biology" />
+                    <el-option label="其他" value="other" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="难度" prop="difficulty">
+                  <el-slider v-model="uploadForm.difficulty" :min="1" :max="5" :marks="{ 1: '简单', 3: '中等', 5: '困难' }" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-form-item label="标准答案" prop="standardAnswer">
+              <el-input
+                v-model="uploadForm.standardAnswer"
+                type="textarea"
+                :rows="3"
+                placeholder="请输入标准答案"
+              />
+            </el-form-item>
+
+            <el-form-item label="我的答案" prop="userAnswer">
+              <el-input
+                v-model="uploadForm.userAnswer"
+                type="textarea"
+                :rows="3"
+                placeholder="请输入您的答案"
+              />
+            </el-form-item>
+
+            <el-form-item label="错误原因" prop="errorReason">
+              <el-input
+                v-model="uploadForm.errorReason"
+                type="textarea"
+                :rows="2"
+                placeholder="请输入错误原因"
+              />
+            </el-form-item>
+
+            <!-- 快捷错误原因 -->
+            <el-form-item label="快捷标签">
+              <div class="quick-tags">
+                <el-tag 
+                  v-for="tag in quickErrorTags" 
+                  :key="tag"
+                  class="quick-tag"
+                  @click="addQuickTag(tag)"
+                  effect="plain"
+                  :type="uploadForm.errorReason.includes(tag) ? 'primary' : 'info'"
+                >
+                  {{ tag }}
+                </el-tag>
+              </div>
+            </el-form-item>
+
+            <el-form-item label="知识点">
+              <el-tag
+                v-for="tag in uploadForm.knowledgePoints"
+                :key="tag"
+                closable
+                @close="removeKnowledgePoint(tag)"
+                class="knowledge-tag"
+              >
+                {{ tag }}
+              </el-tag>
+              <el-input
+                v-model="newKnowledgePoint"
+                placeholder="输入知识点并按Enter添加"
+                @keyup.enter="addKnowledgePoint"
+                class="knowledge-input"
+              />
+            </el-form-item>
+
+            <el-form-item>
+              <el-button @click="goBack">
+                <el-icon><ArrowLeft /></el-icon> 返回上一步
+              </el-button>
+              <el-button type="primary" @click="submitForm" :loading="loading" size="large">
+                <el-icon><Check /></el-icon> 上传错题
+              </el-button>
+              <el-button @click="resetForm">
+                重置
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <!-- 上传成功提示 -->
+        <div class="success-section" v-if="currentStep === 3">
+          <div class="success-icon">
+            <el-icon :size="80" color="#67c23a"><CircleCheck /></el-icon>
+          </div>
+          <h2>上传成功！</h2>
+          <p>您的错题已成功保存到错题本</p>
+          <div class="success-actions">
+            <el-button @click="router.push('/questions')">
+              查看错题列表
             </el-button>
-            <el-button @click="resetForm">
-              重置
+            <el-button type="primary" @click="startNewUpload">
+              继续上传新错题
             </el-button>
-          </el-form-item>
-        </el-form>
+          </div>
+        </div>
       </div>
     </el-card>
   </div>
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Upload } from '@element-plus/icons-vue'
+import { 
+  Picture, 
+  Delete, 
+  Edit, 
+  MagicStick, 
+  ArrowLeft, 
+  Check, 
+  CircleCheck 
+} from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 
 export default {
   name: 'Upload',
   components: {
-    Upload
+    Picture,
+    Delete,
+    Edit,
+    MagicStick,
+    ArrowLeft,
+    Check,
+    CircleCheck
   },
   setup() {
     const router = useRouter()
     const uploadFormRef = ref(null)
     const imageUpload = ref(null)
+    
+    const currentStep = ref(1)
     const loading = ref(false)
+    const analyzing = ref(false)
+    const isDragover = ref(false)
     const newKnowledgePoint = ref('')
     const previewImage = ref('')
+    const analysisResult = ref(null)
 
     const uploadForm = reactive({
       questionContent: '',
@@ -164,8 +280,93 @@ export default {
         { required: true, message: '请输入标准答案', trigger: 'blur' }
       ],
       category: [
-        { required: true, message: '请选择分类', trigger: 'blur' }
+        { required: true, message: '请选择分类', trigger: 'change' }
       ]
+    }
+
+    const quickErrorTags = [
+      '计算错误',
+      '概念不清',
+      '公式记错',
+      '审题错误',
+      '思路错误',
+      '知识遗忘',
+      '粗心大意'
+    ]
+
+    const handleFileChange = (file) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        previewImage.value = e.target.result
+      }
+      reader.readAsDataURL(file.raw)
+    }
+
+    const handleDrop = (e) => {
+      isDragover.value = false
+      const files = e.dataTransfer.files
+      if (files && files.length > 0) {
+        const file = files[0]
+        if (file.type.startsWith('image/')) {
+          handleFileChange({ raw: file })
+        }
+      }
+    }
+
+    const removeImage = () => {
+      previewImage.value = ''
+      if (imageUpload.value) {
+        imageUpload.value.clearFiles()
+      }
+    }
+
+    const analyzeImage = async () => {
+      analyzing.value = true
+      analysisResult.value = null
+
+      try {
+        await new Promise(resolve => setTimeout(resolve, 2000))
+
+        const mockAnalysis = {
+          title: '智能分析完成',
+          type: 'success',
+          description: '已根据图片内容自动填充了部分信息，请核对并补充完整。',
+          suggestedContent: '这是一道关于二次函数的题目，要求求解函数在给定点的值。',
+          suggestedCategory: 'math',
+          suggestedDifficulty: 3,
+          suggestedKnowledgePoints: ['二次函数', '函数求值']
+        }
+
+        if (!uploadForm.questionContent) {
+          uploadForm.questionContent = mockAnalysis.suggestedContent
+        }
+        if (!uploadForm.category) {
+          uploadForm.category = mockAnalysis.suggestedCategory
+        }
+        uploadForm.difficulty = mockAnalysis.suggestedDifficulty
+        mockAnalysis.suggestedKnowledgePoints.forEach(point => {
+          if (!uploadForm.knowledgePoints.includes(point)) {
+            uploadForm.knowledgePoints.push(point)
+          }
+        })
+
+        analysisResult.value = mockAnalysis
+        currentStep.value = 2
+      } catch (error) {
+        ElMessage.error('分析失败，请手动填写')
+        currentStep.value = 2
+      } finally {
+        analyzing.value = false
+      }
+    }
+
+    const skipToManual = () => {
+      currentStep.value = 2
+    }
+
+    const goBack = () => {
+      currentStep.value = 1
+      analysisResult.value = null
     }
 
     const addKnowledgePoint = () => {
@@ -179,19 +380,11 @@ export default {
       uploadForm.knowledgePoints = uploadForm.knowledgePoints.filter(item => item !== tag)
     }
 
-    const handleFileChange = (file) => {
-      // 创建预览图片
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        previewImage.value = e.target.result
-      }
-      reader.readAsDataURL(file.raw)
-    }
-
-    const removeImage = () => {
-      previewImage.value = ''
-      if (imageUpload.value) {
-        imageUpload.value.clearFiles()
+    const addQuickTag = (tag) => {
+      if (!uploadForm.errorReason) {
+        uploadForm.errorReason = tag
+      } else if (!uploadForm.errorReason.includes(tag)) {
+        uploadForm.errorReason += (uploadForm.errorReason ? '、' : '') + tag
       }
     }
 
@@ -202,7 +395,6 @@ export default {
         await uploadFormRef.value.validate()
         loading.value = true
 
-        // 准备FormData
         const formData = new FormData()
         formData.append('questionContent', uploadForm.questionContent)
         formData.append('standardAnswer', uploadForm.standardAnswer)
@@ -212,13 +404,11 @@ export default {
         formData.append('difficulty', uploadForm.difficulty)
         formData.append('knowledgePoints', JSON.stringify(uploadForm.knowledgePoints))
         
-        // 如果有图片，也添加到FormData
         if (imageUpload.value && imageUpload.value.uploadFiles.length > 0) {
           const file = imageUpload.value.uploadFiles[0].raw
           formData.append('questionImage', file)
         }
 
-        // 从localStorage获取token
         const token = localStorage.getItem('token')
         
         const response = await axios.post('/api/wrong-questions/upload', formData, {
@@ -230,8 +420,7 @@ export default {
 
         if (response.data.status === 'success') {
           loading.value = false
-          ElMessage.success('错题上传成功')
-          resetForm()
+          currentStep.value = 3
         } else {
           loading.value = false
           ElMessage.error(response.data.message || '上传失败')
@@ -253,24 +442,44 @@ export default {
       }
       uploadForm.knowledgePoints = []
       uploadForm.questionImage = ''
+      uploadForm.difficulty = 3
       newKnowledgePoint.value = ''
+      previewImage.value = ''
+      analysisResult.value = null
+      currentStep.value = 1
+      removeImage()
+    }
+
+    const startNewUpload = () => {
+      resetForm()
     }
 
     return {
       router,
+      currentStep,
       uploadFormRef,
       imageUpload,
       loading,
-      uploadForm,
-      uploadRules,
+      analyzing,
+      isDragover,
       newKnowledgePoint,
       previewImage,
+      analysisResult,
+      uploadForm,
+      uploadRules,
+      quickErrorTags,
+      handleFileChange,
+      handleDrop,
+      removeImage,
+      analyzeImage,
+      skipToManual,
+      goBack,
       addKnowledgePoint,
       removeKnowledgePoint,
-      handleFileChange,
-      removeImage,
+      addQuickTag,
       submitForm,
-      resetForm
+      resetForm,
+      startNewUpload
     }
   }
 }
@@ -290,7 +499,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 
     h2 {
       margin: 0;
@@ -303,30 +512,156 @@ export default {
   .upload-content {
     padding: 0 20px 20px;
 
-    .upload-form {
-      max-width: 800px;
-
-      .knowledge-tag {
-        margin-right: 10px;
-        margin-bottom: 10px;
-      }
-
-      .knowledge-input {
-        width: 300px;
-        margin-top: 10px;
-      }
-
-      .image-preview {
-        margin-top: 10px;
+    .step-section {
+      .step-title {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        margin-bottom: 24px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #303133;
+      }
 
-        img {
-          max-width: 200px;
-          max-height: 150px;
-          border-radius: 4px;
+      .upload-area {
+        border: 2px dashed #d9d9d9;
+        border-radius: 12px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s;
+        background-color: #fafafa;
+
+        &.is-dragover {
+          border-color: #409eff;
+          background-color: #ecf5ff;
         }
+
+        .image-uploader {
+          width: 100%;
+
+          :deep(.el-upload-dragger) {
+            border: none;
+            background: transparent;
+          }
+
+          .upload-placeholder {
+            .upload-icon {
+              font-size: 64px;
+              color: #c0c4cc;
+              margin-bottom: 16px;
+            }
+
+            .upload-text {
+              .upload-text-main {
+                font-size: 18px;
+                color: #606266;
+                margin-bottom: 8px;
+              }
+
+              .upload-text-sub {
+                font-size: 14px;
+                color: #909399;
+              }
+            }
+          }
+
+          .image-preview-wrapper {
+            position: relative;
+            display: inline-block;
+
+            img {
+              max-width: 100%;
+              max-height: 400px;
+              border-radius: 8px;
+            }
+
+            .image-actions {
+              position: absolute;
+              bottom: 16px;
+              left: 50%;
+              transform: translateX(-50%);
+            }
+          }
+        }
+      }
+
+      .step-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid #f0f0f0;
+      }
+
+      .analysis-alert {
+        margin-bottom: 24px;
+      }
+
+      .upload-form {
+        max-width: 800px;
+        margin: 0 auto;
+
+        .form-image-preview {
+          img {
+            max-width: 300px;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 1px solid #e4e7ed;
+          }
+        }
+
+        .quick-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+
+          .quick-tag {
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover {
+              transform: translateY(-2px);
+            }
+          }
+        }
+
+        .knowledge-tag {
+          margin-right: 8px;
+          margin-bottom: 8px;
+        }
+
+        .knowledge-input {
+          width: 300px;
+          margin-top: 8px;
+        }
+      }
+    }
+
+    .success-section {
+      text-align: center;
+      padding: 60px 20px;
+
+      .success-icon {
+        margin-bottom: 24px;
+      }
+
+      h2 {
+        margin: 0 0 12px 0;
+        font-size: 24px;
+        color: #303133;
+      }
+
+      p {
+        margin: 0 0 32px 0;
+        font-size: 16px;
+        color: #606266;
+      }
+
+      .success-actions {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
       }
     }
   }
@@ -342,21 +677,23 @@ export default {
     .upload-content {
       padding: 0 10px 10px;
 
-      .upload-form {
-        .el-form-item {
-          label-width: 80px;
+      .step-section {
+        .upload-area {
+          padding: 20px;
         }
 
-        .knowledge-input {
-          width: 100%;
-        }
-
-        .image-preview {
+        .step-actions {
           flex-direction: column;
-          align-items: flex-start;
+          gap: 12px;
 
-          img {
-            max-width: 100%;
+          .el-button {
+            width: 100%;
+          }
+        }
+
+        .upload-form {
+          .knowledge-input {
+            width: 100%;
           }
         }
       }
