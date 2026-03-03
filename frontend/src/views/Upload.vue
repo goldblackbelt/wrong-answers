@@ -97,12 +97,64 @@
             </el-form-item>
 
             <el-form-item label="题目内容" prop="questionContent">
-              <el-input
-                v-model="uploadForm.questionContent"
-                type="textarea"
-                :rows="4"
-                placeholder="请输入题目内容"
-              />
+              <div class="question-content-wrapper">
+                <el-input
+                  v-model="uploadForm.questionContent"
+                  type="textarea"
+                  :rows="4"
+                  placeholder="请输入题目内容"
+                />
+                <el-button 
+                  type="success" 
+                  :disabled="!uploadForm.questionContent"
+                  :loading="solving"
+                  @click="solveQuestion"
+                  class="solve-button"
+                >
+                  <el-icon><MagicStick /></el-icon> 智能解题
+                </el-button>
+              </div>
+              <div v-if="aiSolution" class="ai-solution">
+                <el-divider content-position="left">
+                  <el-tag type="success">智能解题</el-tag>
+                </el-divider>
+                <el-card class="solution-card">
+                  <div class="solution-section">
+                    <div class="section-title">
+                      <el-icon><Document /></el-icon> 解题思路
+                    </div>
+                    <div class="section-content">{{ aiSolution.solution }}</div>
+                  </div>
+                  <el-divider v-if="aiSolution.explanation" />
+                  <div v-if="aiSolution.explanation" class="solution-section">
+                    <div class="section-title">
+                      <el-icon><Lightbulb /></el-icon> 解题说明
+                    </div>
+                    <div class="section-content">{{ aiSolution.explanation }}</div>
+                  </div>
+                  <el-divider v-if="aiSolution.knowledgePoints && aiSolution.knowledgePoints.length > 0" />
+                  <div v-if="aiSolution.knowledgePoints && aiSolution.knowledgePoints.length > 0" class="solution-section">
+                    <div class="section-title">
+                      <el-icon><Collection /></el-icon> 推荐知识点
+                    </div>
+                    <div class="knowledge-tags">
+                      <el-tag 
+                        v-for="point in aiSolution.knowledgePoints" 
+                        :key="point"
+                        class="knowledge-tag"
+                        @click="addKnowledgePointFromAI(point)"
+                      >
+                        {{ point }}
+                      </el-tag>
+                    </div>
+                  </div>
+                  <div class="solution-actions">
+                    <el-button type="primary" size="small" @click="applySolution">
+                      <el-icon><Check /></el-icon> 应用到表单
+                    </el-button>
+                  </div>
+                </el-card>
+              </div>
             </el-form-item>
 
             <el-row :gutter="20">
@@ -232,7 +284,10 @@ import {
   MagicStick, 
   ArrowLeft, 
   Check, 
-  CircleCheck 
+  CircleCheck,
+  Document,
+  Lightbulb,
+  Collection
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
@@ -246,7 +301,10 @@ export default {
     MagicStick,
     ArrowLeft,
     Check,
-    CircleCheck
+    CircleCheck,
+    Document,
+    Lightbulb,
+    Collection
   },
   setup() {
     const router = useRouter()
@@ -255,11 +313,13 @@ export default {
     
     const currentStep = ref(1)
     const loading = ref(false)
+    const solving = ref(false)
     const analyzing = ref(false)
     const isDragover = ref(false)
     const newKnowledgePoint = ref('')
     const previewImage = ref('')
     const analysisResult = ref(null)
+    const aiSolution = ref(null)
 
     const uploadForm = reactive({
       questionContent: '',
@@ -388,6 +448,57 @@ export default {
       }
     }
 
+    const solveQuestion = async () => {
+      if (!uploadForm.questionContent) {
+        ElMessage.warning('请先输入题目内容')
+        return
+      }
+
+      solving.value = true
+      aiSolution.value = null
+
+      try {
+        const response = await axios.post('/api/ai/solve', {
+          questionContent: uploadForm.questionContent,
+          category: uploadForm.category,
+          difficulty: uploadForm.difficulty
+        })
+
+        if (response.data.status === 'success') {
+          aiSolution.value = response.data.data
+          ElMessage.success('智能解题完成！')
+        }
+      } catch (error) {
+        console.error('智能解题失败:', error)
+        ElMessage.error('智能解题失败，请重试')
+      } finally {
+        solving.value = false
+      }
+    }
+
+    const addKnowledgePointFromAI = (point) => {
+      if (!uploadForm.knowledgePoints.includes(point)) {
+        uploadForm.knowledgePoints.push(point)
+        ElMessage.success(`已添加知识点: ${point}`)
+      }
+    }
+
+    const applySolution = () => {
+      if (aiSolution.value) {
+        if (!uploadForm.standardAnswer && aiSolution.value.solution) {
+          uploadForm.standardAnswer = aiSolution.value.solution
+        }
+        if (aiSolution.value.knowledgePoints) {
+          aiSolution.value.knowledgePoints.forEach(point => {
+            if (!uploadForm.knowledgePoints.includes(point)) {
+              uploadForm.knowledgePoints.push(point)
+            }
+          })
+        }
+        ElMessage.success('已应用智能解题结果！')
+      }
+    }
+
     const submitForm = async () => {
       if (!uploadFormRef.value) return
       
@@ -446,6 +557,7 @@ export default {
       newKnowledgePoint.value = ''
       previewImage.value = ''
       analysisResult.value = null
+      aiSolution.value = null
       currentStep.value = 1
       removeImage()
     }
@@ -460,11 +572,13 @@ export default {
       uploadFormRef,
       imageUpload,
       loading,
+      solving,
       analyzing,
       isDragover,
       newKnowledgePoint,
       previewImage,
       analysisResult,
+      aiSolution,
       uploadForm,
       uploadRules,
       quickErrorTags,
@@ -477,6 +591,9 @@ export default {
       addKnowledgePoint,
       removeKnowledgePoint,
       addQuickTag,
+      solveQuestion,
+      addKnowledgePointFromAI,
+      applySolution,
       submitForm,
       resetForm,
       startNewUpload
@@ -634,6 +751,67 @@ export default {
         .knowledge-input {
           width: 300px;
           margin-top: 8px;
+        }
+
+        .question-content-wrapper {
+          display: flex;
+          gap: 12px;
+          align-items: flex-start;
+
+          .el-textarea {
+            flex: 1;
+          }
+
+          .solve-button {
+            white-space: nowrap;
+          }
+        }
+
+        .ai-solution {
+          margin-top: 16px;
+
+          .solution-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1px solid #bae6fd;
+
+            .solution-section {
+              .section-title {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-weight: 600;
+                color: #0369a1;
+                margin-bottom: 8px;
+              }
+
+              .section-content {
+                color: #0c4a6e;
+                line-height: 1.6;
+                white-space: pre-wrap;
+              }
+            }
+
+            .knowledge-tags {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
+
+              .knowledge-tag {
+                cursor: pointer;
+                transition: all 0.2s;
+
+                &:hover {
+                  transform: scale(1.05);
+                }
+              }
+            }
+
+            .solution-actions {
+              margin-top: 16px;
+              display: flex;
+              justify-content: flex-end;
+            }
+          }
         }
       }
     }

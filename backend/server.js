@@ -624,6 +624,7 @@ const questionRoutes = require('./routes/question');
 const masteryRoutes = require('./routes/mastery');
 const reviewRoutes = require('./routes/review');
 const analysisRoutes = require('./routes/analysis');
+const aiRoutes = require('./routes/ai');
 
 // 使用路由
 app.use('/api/auth', authRoutes);
@@ -632,6 +633,7 @@ app.use('/api/questions', questionRoutes);
 app.use('/api/mastery', masteryRoutes);
 app.use('/api/review', reviewRoutes);
 app.use('/api/analysis', analysisRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 健康检查路由
 app.get('/health', (req, res) => {
